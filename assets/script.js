@@ -114,4 +114,29 @@ function endGame() {
     var saveScoreButton = document.getElementById("save-score");
     saveScoreButton.addEventListener("click", saveScore);
   }
+  function saveScore() {
+    var initialsInput = document.getElementById("initials");
+    var initials = initialsInput.value.trim();
+  
+    if (initials !== "") {
+      // Save to local storage
+      var savedScores = JSON.parse(localStorage.getItem("quizScores")) || [];
+      savedScores.push({ initials: initials, score: timeLeft });
+      localStorage.setItem("quizScores", JSON.stringify(savedScores));
+  
+      // Log to console
+      console.log("Saved: Initials - " + initials + ", Score - " + timeLeft);
+  
+      // Optionally, you can display a confirmation message
+      alert("Score saved!");
+  
+      // Reset input and hide the game over section
+      initialsInput.value = "";
+      var gameOverSection = document.getElementById("game-over");
+      gameOverSection.style.display = "none";
+    } else {
+      alert("Please enter initials before saving.");
+    }
+  }
+  startButton.addEventListener("click", startQuiz);
   
