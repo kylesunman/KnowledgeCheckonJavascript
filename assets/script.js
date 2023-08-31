@@ -76,23 +76,18 @@ var questions = [
       answersDisplay.appendChild(answerButton);
     });
   }
-  var timeLeft = 60; // Initialize the timer
-var score = 0; // Initialize the score
-
+  var timeLeft = 60; 
+var score = 0; 
 function checkAnswer(correct) {
   if (correct) {
-    score++; // Increase the score by 1 for correct answer
+    score++; 
   } else {
-    timeLeft -= 10; // Deduct 10 seconds for incorrect answer
+    timeLeft -= 10; 
   }
 
-  currentQuestionIndex++;
 
-  if (currentQuestionIndex < questions.length) {
-    showQuestion();
-  } else {
-    endGame();
-  }
+
+  showQuestion(); 
 }
 function updateTimer() {
   timeLeft--;
@@ -104,33 +99,39 @@ function updateTimer() {
   }
 }
 function endGame() {
-    clearInterval(timerInterval);
-    questionDisplay.textContent = "Quiz Over!";
-    answersDisplay.innerHTML = "Your final score is: " + score + " out of " + questions.length;
-  
-    var gameOverSection = document.getElementById("game-over");
-    gameOverSection.style.display = "block";
-  
-    var saveScoreButton = document.getElementById("save-score");
-    saveScoreButton.addEventListener("click", saveScore);
+  clearInterval(timerInterval);
+
+
+  if (timeLeft < 0) {
+    timeLeft = 0;
   }
+
+  questionDisplay.textContent = "Quiz Over!";
+  answersDisplay.innerHTML = "Your final score is: " + score + " out of " + questions.length;
+
+  var gameOverSection = document.getElementById("game-over");
+  gameOverSection.style.display = "block";
+
+  var saveScoreButton = document.getElementById("save-score");
+  saveScoreButton.addEventListener("click", saveScore);
+}
   function saveScore() {
     var initialsInput = document.getElementById("initials");
     var initials = initialsInput.value.trim();
   
     if (initials !== "") {
-      // Save to local storage
+     
       var savedScores = JSON.parse(localStorage.getItem("quizScores")) || [];
       savedScores.push({ initials: initials, score: timeLeft });
       localStorage.setItem("quizScores", JSON.stringify(savedScores));
   
-      // Log to console
+      
       console.log("Saved: Initials - " + initials + ", Score - " + timeLeft);
   
-      // Optionally, you can display a confirmation message
+      e
       alert("Score saved!");
   
-      // Reset input and hide the game over section
+     
       initialsInput.value = "";
       var gameOverSection = document.getElementById("game-over");
       gameOverSection.style.display = "none";
@@ -139,4 +140,32 @@ function endGame() {
     }
   }
   startButton.addEventListener("click", startQuiz);
-  
+  var correctAnswerSelected = false;
+
+function checkAnswer(correct) {
+  if (correct) {
+    score++; 
+    correctAnswerSelected = true;
+  } else {
+    timeLeft -= 10; 
+  }
+
+  clearInterval(timerInterval);
+  updateTimer(); 
+
+  setTimeout(function () {
+    if (!correctAnswerSelected) {
+      timeLeft -= 10; 
+    }
+
+    currentQuestionIndex++;
+    correctAnswerSelected = false; 
+    if (currentQuestionIndex < questions.length) {
+      showQuestion();
+    } else {
+      endGame();
+    }
+
+    timerInterval = setInterval(updateTimer, 1000); 
+  }, 1000); 
+}
